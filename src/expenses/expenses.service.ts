@@ -1,26 +1,78 @@
 import { Injectable } from '@nestjs/common';
 import { CreateExpenseInput } from './dto/create-expense.input';
 import { UpdateExpenseInput } from './dto/update-expense.input';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ExpensesService {
-  create(createExpenseInput: CreateExpenseInput) {
-    return 'This action adds a new expense';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(createExpenseInput: CreateExpenseInput, userId: string) {
+    return this.prisma.expenses.create({
+      data: {
+        userId,
+        ...createExpenseInput,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all expenses`;
+  async findAll(userId: string) {
+    return this.prisma.expenses.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} expense`;
+  async findOne(id: string, userId: string) {
+    return this.prisma.expenses.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
   }
 
-  update(id: number, updateExpenseInput: UpdateExpenseInput) {
-    return `This action updates a #${id} expense`;
+  async update(
+    id: string,
+    updateExpenseInput: UpdateExpenseInput,
+    userId: string,
+  ) {
+    const expense = await this.prisma.expenses.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!expense) {
+      throw new Error('Expense not found');
+    }
+
+    return this.prisma.expenses.update({
+      where: {
+        id,
+      },
+      data: updateExpenseInput,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} expense`;
+  async remove(id: string, userId: string) {
+    const expense = await this.prisma.expenses.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!expense) {
+      throw new Error('Expense not found or you do not have this permission');
+    }
+
+    return this.prisma.expenses.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

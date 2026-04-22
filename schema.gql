@@ -24,29 +24,33 @@ type User {
 }
 
 type Expense {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: String!
+  name: String!
+  description: String
+  categoryId: String!
+  userId: String!
+  amount: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Query {
   hello: String!
   categories: [Category!]!
   category(id: String!): Category!
-  user(id: String!): User!
+  me: User!
   expenses: [Expense!]!
-  expense(id: Int!): Expense!
+  expense(id: String!): Expense!
 }
 
 type Mutation {
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
   updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
   removeCategory(id: String!): Category!
-  createUser(createUserInput: CreateUserInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: String!): User!
+  updateProfile(updateProfileInput: UpdateProfileInput!): User!
   createExpense(createExpenseInput: CreateExpenseInput!): Expense!
   updateExpense(updateExpenseInput: UpdateExpenseInput!): Expense!
-  removeExpense(id: Int!): Expense!
+  removeExpense(id: String!): Expense!
 }
 
 input CreateCategoryInput {
@@ -60,26 +64,22 @@ input UpdateCategoryInput {
   id: String!
 }
 
-input CreateUserInput {
-  name: String!
-  email: String!
-  image: String
-}
-
-input UpdateUserInput {
+input UpdateProfileInput {
   name: String
-  email: String
   image: String
-  id: String!
 }
 
 input CreateExpenseInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  description: String
+  categoryId: String!
+  amount: Float!
 }
 
 input UpdateExpenseInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  name: String
+  description: String
+  categoryId: String
+  amount: Float
+  id: String!
 }

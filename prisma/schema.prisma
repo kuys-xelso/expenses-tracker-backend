@@ -84,11 +84,11 @@ model Verification {
 }
 
 model Category {
-  id       String @id
-  name     String
-  iconName String
-  userId   String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  name      String
+  iconName  String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -100,14 +100,14 @@ model Category {
 }
 
 model Expenses {
-  id          String   @id
+  id          String   @id @default(uuid())
   name        String
   description String?
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId  String
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  amount      Float
+  amount      Decimal    @db.Decimal(10, 2)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

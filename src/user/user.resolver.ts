@@ -1,35 +1,25 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+import { UpdateProfileInput } from './dto/update-profile.input';
+import { Session } from '@thallesp/nestjs-better-auth';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
+  // Returns the currently authenticated user's profile
+  @Query(() => User, { name: 'me' })
+  me(@Session() session: any) {
+    return this.userService.me(session.user.id);
+  }
+
+  // Allows the user to update their own name or avatar
   @Mutation(() => User)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.userService.create(createUserInput);
-  }
-
-  @Query(() => [User], { name: 'user' })
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('id') id: string) {
-    return this.userService.findOne(id);
-  }
-
-  @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.userService.update(updateUserInput.id, updateUserInput);
-  }
-
-  @Mutation(() => User)
-  removeUser(@Args('id') id: string) {
-    return this.userService.remove(id);
+  updateProfile(
+    @Args('updateProfileInput') updateProfileInput: UpdateProfileInput,
+    @Session() session: any,
+  ) {
+    return this.userService.updateProfile(session.user.id, updateProfileInput);
   }
 }

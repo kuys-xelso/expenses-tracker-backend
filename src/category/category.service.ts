@@ -10,7 +10,6 @@ export class CategoryService {
   async create(createCategoryInput: CreateCategoryInput, userId: string) {
     return this.prisma.category.create({
       data: {
-        id: crypto.randomUUID(),
         userId,
         ...createCategoryInput,
       },
